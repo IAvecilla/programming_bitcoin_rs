@@ -1,4 +1,4 @@
-use std::ops::{Add, Mul, Sub};
+use std::ops::{Add, Div, Mul, Sub};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FiniteFieldElement<const P: u128> {
@@ -54,6 +54,14 @@ impl<const P: u128> FiniteFieldElement<P> {
     }
 }
 
+impl<const P: u128> Div<FiniteFieldElement<P>> for FiniteFieldElement<P> {
+    type Output = Self;
+
+    fn div(self, other_number: Self) -> Self {
+        self * other_number.pow((P - 2_u128) as i128)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -97,6 +105,17 @@ mod tests {
 
         assert_eq!(
             first_field_element.pow(3),
+            FiniteFieldElement::<11>::from(5)
+        );
+    }
+
+    #[test]
+    fn test_div_two_finite_field_elements() {
+        let first_field_element = FiniteFieldElement::<11>::from(1);
+        let second_field_element = FiniteFieldElement::<11>::from(20);
+
+        assert_eq!(
+            first_field_element / second_field_element,
             FiniteFieldElement::<11>::from(5)
         );
     }
