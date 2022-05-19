@@ -1,4 +1,4 @@
-use std::ops::{Add, Div, Mul, Sub};
+use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Sub, SubAssign};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FiniteFieldElement<const P: u128> {
@@ -59,6 +59,24 @@ impl<const P: u128> Div<FiniteFieldElement<P>> for FiniteFieldElement<P> {
 
     fn div(self, other_number: Self) -> Self {
         self * other_number.pow((P - 2_u128) as i128)
+    }
+}
+
+impl<const P: u128> MulAssign<FiniteFieldElement<P>> for FiniteFieldElement<P> {
+    fn mul_assign(&mut self, other_number: Self) {
+        self.value = (self.value * other_number.value).rem_euclid(P as i128);
+    }
+}
+
+impl<const P: u128> AddAssign<FiniteFieldElement<P>> for FiniteFieldElement<P> {
+    fn add_assign(&mut self, other_number: Self) {
+        self.value = (self.value + other_number.value).rem_euclid(P as i128);
+    }
+}
+
+impl<const P: u128> SubAssign<FiniteFieldElement<P>> for FiniteFieldElement<P> {
+    fn sub_assign(&mut self, other_number: Self) {
+        self.value = (self.value - other_number.value).rem_euclid(P as i128);
     }
 }
 
