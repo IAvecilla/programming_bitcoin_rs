@@ -41,6 +41,19 @@ impl<const P: u128> Mul<FiniteFieldElement<P>> for FiniteFieldElement<P> {
     }
 }
 
+impl<const P: u128> FiniteFieldElement<P> {
+    pub fn pow(&self, n: i128) -> Self {
+        let exp = n.rem_euclid((P - 1_u128) as i128);
+        let mut value = self.value;
+        for _ in 1..exp {
+            value *= self.value;
+        }
+        Self {
+            value: value.rem_euclid(P as i128),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -75,6 +88,16 @@ mod tests {
         assert_eq!(
             first_field_element * second_field_element,
             FiniteFieldElement::<11>::from(9)
+        );
+    }
+
+    #[test]
+    fn test_pow_a_finite_field_with_a_number() {
+        let first_field_element = FiniteFieldElement::<11>::from(3);
+
+        assert_eq!(
+            first_field_element.pow(3),
+            FiniteFieldElement::<11>::from(5)
         );
     }
 }
