@@ -1,4 +1,4 @@
-use std::ops::{Add, Sub};
+use std::ops::{Add, Mul, Sub};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FiniteFieldElement<const P: u128> {
@@ -31,6 +31,16 @@ impl<const P: u128> Sub<FiniteFieldElement<P>> for FiniteFieldElement<P> {
     }
 }
 
+impl<const P: u128> Mul<FiniteFieldElement<P>> for FiniteFieldElement<P> {
+    type Output = Self;
+
+    fn mul(self, other_number: Self) -> Self {
+        Self {
+            value: (self.value * other_number.value).rem_euclid(P as i128),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -54,6 +64,17 @@ mod tests {
         assert_eq!(
             first_field_element - second_field_element,
             FiniteFieldElement::<11>::from(3)
+        );
+    }
+
+    #[test]
+    fn test_mul_two_finite_field_elements() {
+        let first_field_element = FiniteFieldElement::<11>::from(1);
+        let second_field_element = FiniteFieldElement::<11>::from(20);
+
+        assert_eq!(
+            first_field_element * second_field_element,
+            FiniteFieldElement::<11>::from(9)
         );
     }
 }
